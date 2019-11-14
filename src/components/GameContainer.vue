@@ -47,6 +47,27 @@
             };
         },
 
+        created(){
+            this.axios.get('http://localhost:8080/api/game/' + this.$route.params.id)
+            .then((response) => {
+                this.checkers = Object.assign({}, this.checkers,response.data )
+
+
+                var counts = {};
+                for (var prop in this.checkers)
+                    counts[this.checkers[prop].color] = counts[this.checkers[prop].color]+1 || 1;
+
+                if( ((counts[RED] > counts[BLACK]) && (this.playerColor === RED)) ||
+                    ((counts[BLACK] > counts[RED]) && (this.playerColor === BLACK))
+                ){
+                    this.toggleColor()
+                } else if (this.playerColor === BLACK) { // The BLACK player is the AI, so the user should use his color!
+                    this.toggleColor()
+                }
+
+            })
+        },
+
         computed: {
             overMessage() {
                 if (this.winner) {
@@ -73,10 +94,13 @@
             key,
 
             reset() {
+                this.startGame()
+                /*
                 this.winner = undefined;
                 this.isLocked = false;
                 this.status = PLAY;
                 this.checkers = {};
+                */
             },
 
             toggleColor() {
@@ -102,10 +126,23 @@
                 this.isLocked = true;
                 const color = this.playerColor;
 
-                this.setChecker({ row, col }, { color });
+                this.moveIsValid({row, col, color})
+                .then(() => {
+                    this.setChecker({ row, col }, { color });
+                    this.checkForDraw() || this.checkForWinFrom({ row, col });
 
-                this.checkForDraw() || this.checkForWinFrom({ row, col });
-                this.toggleColor();
+
+                    //TODO: Add code to add move of AI here
+                    //this.toggleColor();
+                    row++;
+                    this.setChecker({ row, col }, { BLACK });
+                    this.checkForDraw() || this.checkForWinFrom({ row, col });
+
+
+                }).catch(error => {
+                    this.isLocked = false;
+                    this.$swal("This is not a valid move!", `${error.response.status} - ${error.response.statusText}`, 'error');
+                });
             },
 
             land() {
@@ -196,7 +233,26 @@
                 this.$swal(`Player ${winner.color.toUpperCase()}, you won!`, "Congratulation!", 'success');
             },
 
+            startGame(){
+                this.axios.get('http://localhost:8080/api/game/start')
+                    .then((response) => {
+                        this.$router.push({
+                            name: 'Game',
+                            params: { id: response.data.id }
+                        })
+                    }).catch(error => {
+                    this.$swal("I couldn't create a new game!", `${error.response.status} - ${error.response.statusText}`, 'error');
+                })
+            },
+
+            moveIsValid(attr){
+                return this.axios.post('http://localhost:8080/api/move', attr)
+
+            },
+
         },
+
+
 
     }
 </script>
