@@ -126,23 +126,21 @@
                 this.isLocked = true;
                 const color = this.playerColor;
 
-                this.moveIsValid({row, col, color})
-                .then(() => {
+                this.moveIsValidAndGetAIMove({row, col, color})
+                .then(response => {
                     this.setChecker({ row, col }, { color });
-                    this.checkForDraw() || this.checkForWinFrom({ row, col });
+                    this.checkForDraw();
+                    this.checkForWinFrom({ row, col });
+                    if(this.winner) return;
 
-
-                    //TODO: Add code to add move of AI here
-                    //this.toggleColor();
-                    row++;
-                    this.setChecker({ row, col }, { BLACK });
-                    this.checkForDraw() || this.checkForWinFrom({ row, col });
-
+                    let moveOfAI = { row: response.data.row , col: response.data.col };
+                    this.setChecker(moveOfAI, { color: BLACK });
+                    this.checkForDraw() || this.checkForWinFrom(moveOfAI);
 
                 }).catch(error => {
                     this.isLocked = false;
-                    this.$swal("This is not a valid move!", `${error.response.status} - ${error.response.statusText}`, 'error');
-                });
+                    this.notifyNotValidMove(`${error.response.status} - ${error.response.statusText}`);
+                })
             },
 
             land() {
@@ -230,7 +228,11 @@
                 this.winner.checkers.forEach((checker) => {
                     this.setChecker(checker, {isWinner: true});
                 });
-                this.$swal(`Player ${winner.color.toUpperCase()}, you won!`, "Congratulation!", 'success');
+                if(winner.color === RED){
+                    this.$swal(`You won!`, "Congratulation!", 'success');
+                } else {
+                    this.$swal(`The AI won! &#128531;`, "Next time you will be better!", 'error');
+                }
             },
 
             startGame(){
@@ -245,9 +247,13 @@
                 })
             },
 
-            moveIsValid(attr){
+            moveIsValidAndGetAIMove(attr){
                 return this.axios.post('http://localhost:8080/api/move', attr)
 
+            },
+
+            notifyNotValidMove(msg){
+                this.$swal("This is not a valid move!", msg, 'error');
             },
 
         },
