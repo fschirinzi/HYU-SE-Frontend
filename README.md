@@ -1,5 +1,11 @@
-# hyu-connect-four-frontend
+# HYU Connect Four Frontend
 
+**This reposiroty followed the linked tutorial to have a simple working Connect  Four game. It was then extend to meet the requirements of the university project.**
+
+- [Connect-Four tutorial](https://rossta.net/blog/series/connect-four.html) 
+- [University project](https://github.com/Ribodou/HYU-software-engineering-AI)
+
+# Instlallation & Usage
 ## Project setup
 ```
 yarn install
@@ -13,16 +19,6 @@ yarn run serve
 ### Compiles and minifies for production
 ```
 yarn run build
-```
-
-### Run your tests
-```
-yarn run test
-```
-
-### Lints and fixes files
-```
-yarn run lint
 ```
 
 ### Customize configuration
