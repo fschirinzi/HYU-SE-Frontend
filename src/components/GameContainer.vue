@@ -248,7 +248,7 @@
             },
 
             moveIsValidAndGetAIMove(attr){
-                return this.axios.post('http://localhost:8080/api/move', attr)
+                return this.axios.post(`http://localhost:8080/api/${this.$route.params.id}/move`, attr)
 
             },
 
