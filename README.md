@@ -5,6 +5,10 @@
 - [Connect-Four tutorial](https://rossta.net/blog/series/connect-four.html) 
 - [University project](https://github.com/Ribodou/HYU-software-engineering-AI)
 
+# Overview of the design
+
+![Overview of the components with the communication](./doc/ressources/frontend-design_overview.png)
+
 # Instlallation & Usage
 ## Project setup
 ```
