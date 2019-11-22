@@ -15,6 +15,12 @@
 yarn install
 ```
 
+### Configure the environment variables
+Update the `VUE_APP_BACKEND_URL` variable to the backend endpoint
+```
+nano .env
+```
+
 ### Compiles and hot-reloads for development
 ```
 yarn run serve
